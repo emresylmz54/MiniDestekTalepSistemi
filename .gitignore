@@ -1,0 +1,9 @@
+# .NET
+**/bin/
+**/obj/
+
+# SQLite database
+**/*.db
+
+# Node.js
+**/node_modules/

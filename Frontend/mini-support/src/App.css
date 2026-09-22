@@ -313,3 +313,17 @@ td {
 .status-buttons button:hover {
   opacity: 0.8;
 }
+.delete-button {
+  margin-top: 15px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #dc2626;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.delete-button:hover {
+  background: #b91c1c;
+}

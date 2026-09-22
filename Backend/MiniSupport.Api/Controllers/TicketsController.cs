@@ -134,4 +134,19 @@ public class TicketsController : ControllerBase
 
         return Ok(ticket);
     }
+    [HttpDelete("{id}")]
+public async Task<IActionResult> DeleteTicket(int id)
+{
+    var ticket = await _context.Tickets.FindAsync(id);
+
+    if (ticket == null)
+    {
+        return NotFound(new { message = "Talep bulunamadı." });
+    }
+
+    _context.Tickets.Remove(ticket);
+    await _context.SaveChangesAsync();
+
+    return NoContent();
+}
 }

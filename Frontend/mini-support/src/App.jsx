@@ -37,6 +37,7 @@ function App() {
 
   const [statusFilter, setStatusFilter] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
+  const [searchText, setSearchText] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [editMode, setEditMode] = useState(false);
@@ -156,6 +157,42 @@ const updateTicket = async () => {
     alert("Talep güncellenirken bir hata oluştu.");
   }
 };
+const deleteTicket = async () => {
+  const confirmed = window.confirm(
+    "Bu talebi silmek istediğinize emin misiniz?"
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `${API_URL}/${selectedTicket.id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Talep silinemedi.");
+    }
+
+    setTickets((prevTickets) =>
+      prevTickets.filter(
+        (ticket) => ticket.id !== selectedTicket.id
+      )
+    );
+
+    setSelectedTicket(null);
+    setEditMode(false);
+
+    alert("Talep başarıyla silindi.");
+  } catch (error) {
+    console.error(error);
+    alert("Talep silinirken bir hata oluştu.");
+  }
+};
 const changeStatus = async (newStatus) => {
   try {
     const response = await fetch(
@@ -190,16 +227,21 @@ const changeStatus = async (newStatus) => {
   }
 };  
 const filteredTickets = tickets.filter((ticket) => {
-    const statusMatches =
-      statusFilter === "" ||
-      ticket.status === Number(statusFilter);
+  const statusMatches =
+    statusFilter === "" ||
+    ticket.status === Number(statusFilter);
 
-    const priorityMatches =
-      priorityFilter === "" ||
-      ticket.priority === Number(priorityFilter);
+  const priorityMatches =
+    priorityFilter === "" ||
+    ticket.priority === Number(priorityFilter);
 
-    return statusMatches && priorityMatches;
-  });
+  const searchMatches =
+    searchText === "" ||
+    ticket.title.toLowerCase().includes(searchText.toLowerCase()) ||
+    ticket.description.toLowerCase().includes(searchText.toLowerCase());
+
+  return statusMatches && priorityMatches && searchMatches;
+});
 
   return (
     <div>
@@ -225,6 +267,12 @@ const filteredTickets = tickets.filter((ticket) => {
       <hr />
 
       <div className="filters">
+      <input
+  type="text"
+  placeholder="Talep ara..."
+  value={searchText}
+  onChange={(e) => setSearchText(e.target.value)}
+/>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
@@ -404,6 +452,12 @@ const filteredTickets = tickets.filter((ticket) => {
     >
       Talebi Güncelle
     </button>
+    <button
+  className="delete-button"
+  onClick={deleteTicket}
+>
+  Talebi Sil
+</button>
   </>
 )}
 
